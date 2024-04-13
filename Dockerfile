@@ -1,5 +1,5 @@
 # Use the official Ubuntu 18.04 LTS base image
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 
 # Install Apache, PHP, and necessary PHP extensions along with MariaDB
 RUN apt-get update && apt-get install -y \
