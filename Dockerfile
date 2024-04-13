@@ -21,16 +21,16 @@ RUN apt-get install -y \
         php7.2-cli \
         php7.2-ldap \
         php7.2-zip \
-        php7.2-curl
+        php7.2-curl \
         apache2 \
         mariadb-server \
         mariadb-client \
         wget \
-        unzip \
-        # Clean up
-RUN apt-get clean && \
-    rm -rf /var/lib/apt/lists/* 
-        && a2enmod rewrite
+        unzip && \
+    # Clean up
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    a2enmod rewrite
 # Download PHPUnit
 RUN wget -O phpunit https://phar.phpunit.de/phpunit-8.phar && \
     chmod +x phpunit && \
