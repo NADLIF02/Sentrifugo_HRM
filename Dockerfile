@@ -1,13 +1,15 @@
-# Use the official Ubuntu 18.04 LTS base image
+# Use the official Ubuntu 20.04 LTS base image
 FROM ubuntu:20.04
 
+# Prevent tzdata from prompting for time zone
+ENV DEBIAN_FRONTEND=noninteractive
+
 # Setup the environment
-RUN apt-get -y update && \
-    apt-get -y install software-properties-common wget && \
+RUN apt-get update -y && \
+    apt-get install -y software-properties-common && \
     add-apt-repository -y ppa:ondrej/php && \
-    apt-get -y update
-# Install Apache, PHP, and necessary PHP extensions along with MariaDB
-RUN apt-get install -y \
+    apt-get update -y && \
+    apt-get install -y \
         php7.2 \
         libapache2-mod-php7.2 \
         php7.2-common \
@@ -27,10 +29,10 @@ RUN apt-get install -y \
         mariadb-client \
         wget \
         unzip && \
-    # Clean up
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     a2enmod rewrite
+
 # Download PHPUnit
 RUN wget -O phpunit https://phar.phpunit.de/phpunit-8.phar && \
     chmod +x phpunit && \
@@ -47,11 +49,10 @@ RUN wget http://www.sentrifugo.com/home/downloadfile?file_name=Sentrifugo.zip -O
 # Configure Apache
 COPY sentrifugo.conf /etc/apache2/sites-available/sentrifugo.conf
 RUN a2ensite sentrifugo && \
-    a2enmod rewrite && \
-    service apache2 restart && \
-    rm /var/www/html/index.html
+    service apache2 restart
+
 # Expose port 80
 EXPOSE 80
 
-# Start Apache
-CMD ["apache2ctl", "-D", "FOREGROUND"]
+# Start Apache and MariaDB in the foreground
+CMD service mariadb start && apache2ctl -D FOREGROUND
