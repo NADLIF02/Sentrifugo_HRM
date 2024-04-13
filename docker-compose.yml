@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: sentrifugo_app
+    ports:
+      - "80:80"
+    volumes:
+      - ./sentrifugo_data:/var/www/html/sentrifugo
+    depends_on:
+      - db
+
+  db:
+    image: mariadb:10.4
+    container_name: sentrifugo_mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: sentrifugodb
+      MYSQL_USER: sentrifugo
+      MYSQL_PASSWORD: howtoforge
+    volumes:
+      - mariadb_data:/var/lib/mysql
+
+volumes:
+  mariadb_data:
+  sentrifugo_data:
