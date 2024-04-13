@@ -53,9 +53,5 @@ RUN a2ensite sentrifugo && \
 # Expose port 80
 EXPOSE 80
 
-# Use a custom script to start MariaDB and Apache
-COPY start.sh /usr/local/bin/start.sh
-RUN chmod +x /usr/local/bin/start.sh
-
 # Start Apache
 CMD ["apache2ctl", "-D", "FOREGROUND"]
