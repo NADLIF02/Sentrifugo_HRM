@@ -1,6 +1,7 @@
+# Use the official Ubuntu 18.04 LTS base image
 FROM ubuntu:18.04
 
-# Install Apache, PHP, MariaDB, and other necessary packages
+# Install Apache, PHP, and necessary PHP extensions along with MariaDB
 RUN apt-get update && apt-get install -y \
     apache2 \
     php7.2 \
@@ -12,13 +13,13 @@ RUN apt-get update && apt-get install -y \
     php7.2-ldap \
     php7.2-zip \
     libapache2-mod-php7.2 \
-    unzip \
-    wget \
     mariadb-server \
     mariadb-client \
-    && a2enmod rewrite \
-    && service mysql start \
-    && mysql -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION; FLUSH PRIVILEGES;" 
+    wget \
+    unzip \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* \
+    && a2enmod rewrite
 
 # Download and install Sentrifugo
 WORKDIR /tmp
@@ -35,5 +36,8 @@ RUN a2ensite sentrifugo
 # Expose port 80
 EXPOSE 80
 
-# Start Apache2 and MariaDB in the foreground
-CMD service mysql start && apache2ctl -D FOREGROUND
+# Use a custom script to start MariaDB and Apache
+COPY start.sh /usr/local/bin/start.sh
+RUN chmod +x /usr/local/bin/start.sh
+
+CMD ["/usr/local/bin/start.sh"]
